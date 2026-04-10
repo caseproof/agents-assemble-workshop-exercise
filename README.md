@@ -101,7 +101,7 @@ Run it:
 /explain
 ```
 
-One markdown file = one command. No config, no plugins.
+One markdown file = one command.
 
 ---
 
@@ -133,33 +133,9 @@ Twelve lines of markdown just changed how an AI reasons about your codebase. Tha
 
 ---
 
-### Exercise 4: Ralph Wiggum — Fix Until It Passes (the main event)
+### Exercise 4: Ralph Wiggum — The Persistent Builder (4 min)
 
-This is the one. This is what everything else was building toward.
-
-> **Ralph Wiggum Guide:** https://awesomeclaude.ai/ralph-wiggum
-
-This repo has **intentional bugs** in `src/`. The tests in `tests/` are correct. Ralph's job: run the tests, find what's failing, fix the source, run again. Repeat until everything is green.
-
-```
-/ralph-loop:ralph-loop "Run vendor/bin/phpunit. If any tests fail, read the relevant file in src/, find the bug, fix it, and run the tests again. Only modify files in src/ — never modify tests/."
-  --completion-promise "OK (3 tests, 0 failures)"
-  --max-iterations 15
-```
-
-Watch what happens. Ralph runs the tests, reads the failure output, opens the right source file, fixes the bug, runs again. Each module — StringUtils, ArrayUtils, ValidationUtils — gets fixed one failure at a time.
-
-You gave it a broken codebase and a way to measure success. It did the rest.
-
-> **What's actually happening:** Each Ralph iteration is a fresh agent — no memory of the previous run. The test output *is* the feedback loop. Ralph reads it, finds the failure, fixes it, runs again. The better your feedback loop, the better Ralph performs. PHPUnit's output tells Ralph exactly what broke and where. That's all it needs.
-
-To stop early: `/ralph-loop:cancel-ralph`
-
----
-
-### Exercise 5: Ralph Wiggum — The Persistent Builder (4 min)
-
-Now that you've seen Ralph fix real bugs, here's the simpler pattern — useful for any list of tasks.
+Before applying Ralph to real code, learn the pattern with something simple.
 
 Create a `TODO.md`:
 ```markdown
@@ -175,7 +151,35 @@ Run it:
   --max-iterations 10
 ```
 
-The TODO.md is the memory. Ralph reads it, sees what's checked, picks the next unchecked item, does it, marks it done, exits. The loop calls it again. The file is the state.
+Watch it work through the list — one task, check it off, back for the next. When all three are done, it stops itself.
+
+The TODO.md is the memory. Ralph reads it, sees what's checked, picks the next unchecked item, does it, marks it done, exits. The loop calls it again. The file is the state. This is the same principle behind every Ralph pattern.
+
+To stop early: `/ralph-loop:cancel-ralph`
+
+---
+
+### Exercise 5: Ralph Wiggum — Fix Until It Passes (the main event)
+
+Now apply that same pattern to a real codebase.
+
+> **Ralph Wiggum Guide:** https://awesomeclaude.ai/ralph-wiggum
+
+This repo has **intentional bugs** in `src/`. The tests in `tests/` are correct. Ralph's job: run the tests, find what's failing, fix the source, run again. Repeat until everything is green.
+
+```
+/ralph-loop:ralph-loop "Run vendor/bin/phpunit. If any tests fail, read the relevant file in src/, find the bug, fix it, and run the tests again. Only modify files in src/ — never modify tests/."
+  --completion-promise "OK (36 tests"
+  --max-iterations 15
+```
+
+Watch what happens. Ralph runs the tests, reads the failure output, opens the right source file, fixes the bug, runs again. Each module — StringUtils, ArrayUtils, ValidationUtils — gets fixed one failure at a time.
+
+You gave it a broken codebase and a way to measure success. It did the rest.
+
+> **What's actually happening:** Each Ralph iteration is a fresh agent — no memory of the previous run. The test output *is* the feedback loop. Ralph reads it, finds the failure, fixes it, runs again. The better your feedback loop, the better Ralph performs. PHPUnit's output tells Ralph exactly what broke and where. That's all it needs.
+
+To stop early: `/ralph-loop:cancel-ralph`
 
 ---
 
@@ -278,6 +282,27 @@ claude -p "Run vendor/bin/phpunit. If any tests fail, fix the source file and ru
 - **From your terminal, one-shot** → `claude -p`
 - **In a cron job or CI/CD** → `claude -p`
 - **Overnight, laptop closed** → `/schedule`
+
+---
+
+## Agent Teams
+
+Once you've mastered loops and Ralph, the next level is coordinated multi-agent teams — multiple Claude instances working in parallel with defined roles, isolated worktrees, and structured handoffs.
+
+```
+"Build me a three-agent pipeline. Strategist, developer, QA.
+Parallel. Loop until QA passes."
+```
+
+One sentence. Claude writes the CLAUDE.md files, the role definitions, and the orchestration. Your agents. Your rules. Your team.
+
+**How it works:**
+- Each agent gets a role definition (a markdown file describing its job, inputs, outputs, quality bar)
+- Agents run in parallel using git worktrees for isolation — no concurrent writes, no conflicts
+- The orchestrator dispatches work, collects output, routes failures back to the right agent
+- The pipeline loops until a quality gate passes
+
+**Read more:** https://code.claude.com/docs/en/agent-teams
 
 ---
 
