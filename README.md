@@ -32,6 +32,7 @@ That's not a demo. That's a workflow. Let's build it.
 - [Going Deeper: `claude -p` Headless Mode](#going-deeper-claude--p-headless-mode)
 - [Going Deeper: Daemons](#going-deeper-daemons)
 - [What's Next](#whats-next)
+- [Glossary](#glossary)
 - [Resources](#resources)
 
 ---
@@ -441,6 +442,28 @@ watch('prds/*.md', { ignoreInitial: true }).on('add', (path) => {
 - **`/schedule`** — cloud tasks that run without your laptop: `/schedule daily at 2am Read TODO.md and complete all unchecked tasks`
 - **Great Minds Plugin** — full 14-persona agent team: `npx plugins add sethshoultes/great-minds-plugin` → `/agency-debate "your question"`
 - **Build your own team** — *"Build me a three-agent pipeline. Strategist, developer, QA. Parallel. Loop until QA passes."* One sentence. Claude writes the whole thing.
+
+---
+
+## Glossary
+
+| Term | What it means |
+|------|--------------|
+| **`claude -p`** | Headless mode — runs a Claude prompt from your terminal without opening a chat session. One prompt, one result, exits. |
+| **Chokidar** | A Node.js file watcher library (Hindi for "watchman"). Monitors directories for file changes and fires callbacks. Used inside webpack, Vite, and Jest. |
+| **Completion promise** | A string you pass to Ralph (`--completion-promise`) that tells it when to stop. Ralph watches its output for that exact string and exits the loop when it appears. |
+| **CLAUDE.md** | A markdown file Claude Code reads automatically when it starts in a directory. Defines the agent's identity, rules, and context — like a job description for your AI. |
+| **Daemon** | A long-running background process. Unlike `claude -p` which runs once and exits, a daemon stays alive, watches for events, dispatches agents, and recovers from failures. |
+| **Eventual consistency** | The Ralph principle: an agent doesn't have to get everything right in one pass. Each iteration makes progress. Given enough iterations, the system converges on the correct result. |
+| **Git worktree** | A way to check out multiple branches of the same repo simultaneously in different directories. Lets parallel agents work in isolation without overwriting each other. |
+| **Headless mode** | Running Claude Code non-interactively from the terminal via `claude -p`. No chat window, no UI — just a prompt in, output out. Used in scripts, cron jobs, and daemons. |
+| **Persona** | An identity assigned to an agent via its system prompt. Changes not just what the agent does but *how* it reasons — Margaret Hamilton asks "will this break at 3am?", Steve Jobs asks "is this beautiful?" |
+| **PHPUnit** | PHP's standard testing framework. Runs test files and reports which pass or fail. Used in Exercise 5 as Ralph's feedback loop. |
+| **PRD** | Product Requirements Document. In the Ralph pattern, a structured list of user stories with `pass`/`fail` status that Ralph works through iteratively. |
+| **Ralph Wiggum** | A looping agent pattern where Claude runs repeatedly until a completion condition is met. Each iteration is a fresh context — the file system (TODO.md, prd.json) is the memory. Named after the Simpsons character. |
+| **Sub-agent** | A Claude instance with a defined role, persona, and tool permissions, invoked by an orchestrating agent to handle a specific task. Defined as a markdown file with frontmatter. |
+| **TF-IDF** | Term Frequency–Inverse Document Frequency. A text similarity algorithm used for semantic search without requiring AI embeddings — lightweight and runs locally. Used in the Great Minds memory store. |
+| **Worktree** | See *Git worktree*. |
 
 ---
 
