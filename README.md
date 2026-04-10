@@ -304,6 +304,32 @@ Create a sub-agent for writing blog posts. Use agents/maya-angelou-writer.md as 
 
 ---
 
+## Going Deeper: Memory Systems
+
+By default, agent memory is file-based — `MEMORY.md` as an index, individual `.md` files for each memory, written and read by the agent across sessions. This works well for a single agent working on a single project.
+
+When you have multiple agents, multiple projects, or need to search across accumulated knowledge, a database becomes the better tool.
+
+**The pattern:** SQLite + embeddings. Each memory is stored as a row with a vector embedding alongside it. When an agent needs context, it searches by semantic similarity rather than exact file names.
+
+```bash
+# Add a learning after a project
+memory add --type learning --agent "Margaret Hamilton" \
+  --content "PHPUnit completion promise must match exact output string"
+
+# Search before starting work
+memory search "how did we handle PHPUnit output matching"
+# → returns the most relevant memories by semantic similarity
+```
+
+**Why this matters for agent teams:** Individual agents have no shared memory by default. A database gives the whole team a common brain — Margaret's QA findings are visible to Steve's product review, Jensen's strategic decisions inform Elon's feasibility checks. The memory compounds across projects instead of resetting each session.
+
+**The `memory:` field in agent frontmatter** connects an agent to Claude Code's built-in memory system — the same file-based approach, scoped per-agent. For most projects this is enough. When it isn't, a SQLite store is the natural next step.
+
+**Implementation reference:** The Great Minds agency uses a SQLite + TF-IDF vector store with semantic search across 155+ accumulated memories — see [`sethshoultes/great-minds`](https://github.com/sethshoultes/great-minds) for the full implementation.
+
+---
+
 ## Going Deeper: Agent Teams
 
 Once you've defined individual agents, the next level is coordinating them — multiple Claude instances working in parallel with structured handoffs.
