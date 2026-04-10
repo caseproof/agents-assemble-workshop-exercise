@@ -285,6 +285,8 @@ Use the qa-agent to review the last commit.
 - Defined inputs (what to read) and outputs (what to produce)
 - Explicit tool permissions (don't give a reviewer write access)
 
+**14 ready-made personas are in the [`agents/`](./agents) folder** — Margaret Hamilton, Steve Jobs, Elon Musk, Jony Ive, and 10 more. Clone the repo and they're ready to use. Each file is a fully defined sub-agent you can drop into any project.
+
 **Read more:** https://code.claude.com/docs/en/sub-agents
 
 ---
