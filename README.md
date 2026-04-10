@@ -285,7 +285,20 @@ Use the qa-agent to review the last commit.
 - Defined inputs (what to read) and outputs (what to produce)
 - Explicit tool permissions (don't give a reviewer write access)
 
-**14 ready-made personas are in the [`agents/`](./agents) folder** — Margaret Hamilton, Steve Jobs, Elon Musk, Jony Ive, and 10 more. Clone the repo and they're ready to use. Each file is a fully defined sub-agent you can drop into any project.
+**The fastest way to create one:** just tell Claude Code what you need.
+
+```
+Create a sub-agent for code review. It should focus on security vulnerabilities
+and performance issues. Assign it the Margaret Hamilton persona from agents/margaret-hamilton-qa.md.
+```
+
+Claude will generate the agent file, wire up the persona, and drop it in `.claude/agents/`. You can also build one from scratch with the `/agents` command, or write the markdown file directly — the format is just frontmatter + a system prompt.
+
+**14 ready-made personas are in the [`agents/`](./agents) folder** — Margaret Hamilton, Steve Jobs, Elon Musk, Jony Ive, and 10 more. Clone the repo and they're ready to use as-is, or reference them as a starting point for your own agents:
+
+```
+Create a sub-agent for writing blog posts. Use agents/maya-angelou-writer.md as the persona.
+```
 
 **Read more:** https://code.claude.com/docs/en/sub-agents
 
