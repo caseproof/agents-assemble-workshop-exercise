@@ -304,6 +304,26 @@ Create a sub-agent for writing blog posts. Use agents/maya-angelou-writer.md as 
 
 ---
 
+## Going Deeper: Agent Teams
+
+Once you've defined individual agents, the next level is coordinating them — multiple Claude instances working in parallel with structured handoffs.
+
+```
+"Build me a three-agent pipeline. Strategist, developer, QA.
+Parallel. Loop until QA passes."
+```
+
+One sentence. Claude writes the role definitions and the orchestration. Your agents. Your rules. Your team.
+
+**How it works:**
+- Each agent runs in an isolated git worktree — no concurrent writes, no conflicts
+- The orchestrator dispatches work, collects output, routes failures back to the right agent
+- The pipeline loops until a quality gate passes
+
+**Read more:** https://code.claude.com/docs/en/agent-teams
+
+---
+
 ## Going Deeper: Memory Systems
 
 By default, agent memory is file-based — `MEMORY.md` as an index, individual `.md` files for each memory, written and read by the agent across sessions. This works well for a single agent working on a single project.
@@ -327,26 +347,6 @@ memory search "how did we handle PHPUnit output matching"
 **The `memory:` field in agent frontmatter** connects an agent to Claude Code's built-in memory system — the same file-based approach, scoped per-agent. For most projects this is enough. When it isn't, a SQLite store is the natural next step.
 
 **Implementation reference:** The Great Minds agency uses a SQLite + TF-IDF vector store with semantic search across 155+ accumulated memories — see [`sethshoultes/great-minds`](https://github.com/sethshoultes/great-minds) for the full implementation.
-
----
-
-## Going Deeper: Agent Teams
-
-Once you've defined individual agents, the next level is coordinating them — multiple Claude instances working in parallel with structured handoffs.
-
-```
-"Build me a three-agent pipeline. Strategist, developer, QA.
-Parallel. Loop until QA passes."
-```
-
-One sentence. Claude writes the role definitions and the orchestration. Your agents. Your rules. Your team.
-
-**How it works:**
-- Each agent runs in an isolated git worktree — no concurrent writes, no conflicts
-- The orchestrator dispatches work, collects output, routes failures back to the right agent
-- The pipeline loops until a quality gate passes
-
-**Read more:** https://code.claude.com/docs/en/agent-teams
 
 ---
 
