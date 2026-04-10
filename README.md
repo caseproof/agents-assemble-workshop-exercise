@@ -11,6 +11,30 @@ That's not a demo. That's a workflow. Let's build it.
 
 ---
 
+## Table of Contents
+
+- [Setup](#setup-do-this-first)
+- [Run Tests](#run-tests)
+- [What's Broken](#whats-broken)
+- [Rules](#rules)
+- [Exercises](#exercises)
+  - [Exercise 1: /loop — On/Off Switch](#exercise-1-loop--learn-the-onoff-switch-2-min)
+  - [Exercise 2: Build a Custom Command](#exercise-2-build-a-custom-command-3-min)
+  - [Exercise 3: Give Your Agent a Brain](#exercise-3-give-your-agent-a-brain-4-min)
+  - [Exercise 4: Ralph — The Persistent Builder](#exercise-4-ralph-wiggum--the-persistent-builder-4-min)
+  - [Exercise 5: Ralph — Fix Until It Passes](#exercise-5-ralph-wiggum--fix-until-it-passes-the-main-event)
+  - [Exercise 6: Ralph With a Real PRD](#exercise-6-ralph-with-a-real-prd--the-full-pattern-take-home)
+  - [Bonus: Two Agents, One Goal](#bonus-two-agents-one-goal)
+  - [Try: Great Minds Debate](#try-great-minds-debate-2-min)
+- [Going Deeper: Custom Agents + Personas](#going-deeper-custom-agents--personas)
+- [Going Deeper: Agent Teams](#going-deeper-agent-teams)
+- [Going Deeper: Memory Systems](#going-deeper-memory-systems)
+- [Going Deeper: `claude -p` Headless Mode](#going-deeper-claude--p-headless-mode)
+- [What's Next](#whats-next)
+- [Resources](#resources)
+
+---
+
 ## Setup (do this first)
 
 ```bash
