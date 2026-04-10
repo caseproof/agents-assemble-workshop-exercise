@@ -2,8 +2,7 @@
 
 A PHP utility library with **intentional bugs**. Your job: let an autonomous AI agent find and fix them.
 
-By the end of Exercise 3, you'll have an agent working through a task list while you watch.
-By the end of Exercise 4, you'll have one fixing its own bugs without being asked twice.
+By the end of Exercise 4, you'll have an agent working through a real codebase — running tests, finding bugs, fixing them, running tests again — without being asked twice.
 By the end of the Bonus, you'll have two agents running in parallel — one building, one monitoring.
 
 That's not a demo. That's a workflow. Let's build it.
@@ -58,13 +57,29 @@ The tests are correct. The source code is not. Don't modify the tests.
 
 ## Exercises
 
-> **Pro tip:** You don't have to create any of these files by hand. Claude Code can do it for you. Just say: *"Create a TODO.md with three tasks"* — and it will. Need a test file? *"Write a math.js with a few intentional bugs and a test file that catches them."* Claude can create files, run bash commands, scaffold entire project structures. These exercises show the file contents so you know what's happening — but in practice, just ask Claude to make it.
+> **Pro tip:** You don't have to create any of these files by hand. Claude Code can do it for you. Just say: *"Create a TODO.md with three tasks"* — and it will. Claude can create files, run bash commands, scaffold entire project structures. These exercises show the file contents so you know what's happening — but in practice, just ask Claude to make it.
 
 ---
 
-### Exercise 1: Build a Custom Command (4 min)
+### Exercise 1: /loop — Learn the On/Off Switch (2 min)
 
-Create your first slash command — one markdown file becomes one reusable tool.
+Before you build anything autonomous, learn how to start and stop it.
+
+```
+/loop 1m tell me a fun fact about the current time
+```
+
+Watch it run. Then tell Claude: `end the loop`
+
+That's it. Now you know the switch. Everything else in this workshop depends on knowing you can stop it.
+
+> **Exit conditions:** Instead of stopping manually, write the exit condition into the prompt: `"...when done, say ALL TASKS COMPLETE"` and pass `--completion-promise "ALL TASKS COMPLETE"`. The loop stops itself. You'll use this in every Ralph exercise.
+
+---
+
+### Exercise 2: Build a Custom Command (3 min)
+
+One markdown file becomes one reusable slash command.
 
 ```bash
 mkdir -p ~/.claude/commands
@@ -81,7 +96,7 @@ Read the README and package.json (or equivalent).
 Give me a 3-sentence summary of what this project does.
 ```
 
-Run it in any project:
+Run it:
 ```
 /explain
 ```
@@ -90,14 +105,14 @@ One markdown file = one command. No config, no plugins.
 
 ---
 
-### Exercise 2: Give Your Agent a Brain (4 min)
+### Exercise 3: Give Your Agent a Brain (4 min)
 
 First, ask Claude to review something *without* a CLAUDE.md:
 ```
 Review the last commit.
 ```
 
-Note the response. Now create a `CLAUDE.md` in your project directory:
+Note the response. Now create a `CLAUDE.md` in this directory:
 ```markdown
 # CLAUDE.md
 
@@ -118,7 +133,31 @@ Twelve lines of markdown just changed how an AI reasons about your codebase. Tha
 
 ---
 
-### Exercise 3: Ralph Wiggum — The Persistent Builder (4 min)
+### Exercise 4: Ralph Wiggum — Fix Until It Passes (the main event)
+
+This is the one. This is what everything else was building toward.
+
+This repo has **intentional bugs** in `src/`. The tests in `tests/` are correct. Ralph's job: run the tests, find what's failing, fix the source, run again. Repeat until everything is green.
+
+```
+/ralph-loop:ralph-loop "Run vendor/bin/phpunit. If any tests fail, read the relevant file in src/, find the bug, fix it, and run the tests again. Only modify files in src/ — never modify tests/."
+  --completion-promise "OK (3 tests, 0 failures)"
+  --max-iterations 15
+```
+
+Watch what happens. Ralph runs the tests, reads the failure output, opens the right source file, fixes the bug, runs again. Each module — StringUtils, ArrayUtils, ValidationUtils — gets fixed one failure at a time.
+
+You gave it a broken codebase and a way to measure success. It did the rest.
+
+> **What's actually happening:** Each Ralph iteration is a fresh agent — no memory of the previous run. The test output *is* the feedback loop. Ralph reads it, finds the failure, fixes it, runs again. The better your feedback loop, the better Ralph performs. PHPUnit's output tells Ralph exactly what broke and where. That's all it needs.
+
+To stop early: `/ralph-loop:cancel-ralph`
+
+---
+
+### Exercise 5: Ralph Wiggum — The Persistent Builder (4 min)
+
+Now that you've seen Ralph fix real bugs, here's the simpler pattern — useful for any list of tasks.
 
 Create a `TODO.md`:
 ```markdown
@@ -127,62 +166,18 @@ Create a `TODO.md`:
 - [ ] Create a file called count.txt with the numbers 1 through 5, one per line
 ```
 
-Now tell Ralph what to do, what done looks like, and when to stop:
+Run it:
 ```
 /ralph-loop:ralph-loop "Read TODO.md. Pick one unchecked task. Do it. Mark it [x] in TODO.md. When all tasks are checked, say ALL TASKS COMPLETE."
   --completion-promise "ALL TASKS COMPLETE"
   --max-iterations 10
 ```
 
-Watch it work through the list — one task, check it off, back for the next. When all three are done, it stops itself.
-
-To stop early: `/ralph-loop:cancel-ralph`
-
-> **What's actually happening under the hood:** Each Ralph iteration is a completely fresh agent instance — no memory of the previous run. The TODO.md *is* the memory. Ralph reads it, sees what's checked, picks the next unchecked item, does it, marks it done, and exits. The loop calls it again. The file is the state.
+The TODO.md is the memory. Ralph reads it, sees what's checked, picks the next unchecked item, does it, marks it done, exits. The loop calls it again. The file is the state.
 
 ---
 
-### Exercise 4: Ralph Wiggum — Fix Until It Passes (the main event)
-
-This is the one. This is what everything else was building toward.
-
-Create a file called `math.js`:
-```javascript
-function add(a, b) {
-  return a - b; // bug: should be +
-}
-
-function multiply(a, b) {
-  return a + b; // bug: should be *
-}
-
-module.exports = { add, multiply };
-```
-
-Create `math.test.js`:
-```javascript
-const { add, multiply } = require('./math');
-
-console.assert(add(2, 3) === 5, 'FAIL: add(2, 3) should be 5, got ' + add(2, 3));
-console.assert(add(-1, 1) === 0, 'FAIL: add(-1, 1) should be 0, got ' + add(-1, 1));
-console.assert(multiply(3, 4) === 12, 'FAIL: multiply(3, 4) should be 12, got ' + multiply(3, 4));
-console.assert(multiply(0, 5) === 0, 'FAIL: multiply(0, 5) should be 0, got ' + multiply(0, 5));
-
-console.log('ALL TESTS PASSED');
-```
-
-Now let Ralph fix it:
-```
-/ralph-loop:ralph-loop "Run node math.test.js. If any assertions fail, read math.js, find the bug, fix it, and run the tests again."
-  --completion-promise "ALL TESTS PASSED"
-  --max-iterations 5
-```
-
-You gave it broken code and a way to measure success. It did the rest. No instructions on *how* to fix it. No hand-holding. Just: here's the work, here's what done looks like, go.
-
----
-
-### Exercise 5: Ralph With a Real PRD — The Full Pattern (take-home)
+### Exercise 6: Ralph With a Real PRD — The Full Pattern (take-home)
 
 This is the original Ralph technique as described by Jeffrey Huntley. Instead of a TODO list, Ralph works from a structured requirements file — and writes its own memory between iterations.
 
@@ -247,13 +242,24 @@ Now you have two agents: one building, one monitoring. That's the beginning of a
 
 ---
 
-## Going Deeper: `claude -p` (Headless Mode)
-
-Everything in this workshop — `/loop`, Ralph Wiggum, `/schedule` — is built on top of `claude -p`.
+### Try: Great Minds Debate (2 min)
 
 ```bash
-claude -p "Add a second line to hello.txt that says 'Modified by Claude'" \
-  --max-turns 3 \
+npx plugins add sethshoultes/great-minds-plugin
+/agency-debate "Should we build a mobile app or web app first?"
+```
+
+Watch Steve Jobs and Elon Musk argue about it. Then try it on a real decision you're facing.
+
+---
+
+## Going Deeper: `claude -p` (Headless Mode)
+
+Everything in this workshop — `/loop`, Ralph Wiggum, `/schedule` — is built on top of `claude -p`. Runs in your regular terminal, no chat window, no interactive session.
+
+```bash
+claude -p "Run vendor/bin/phpunit. If any tests fail, fix the source file and run again." \
+  --max-turns 10 \
   --max-budget-usd 0.50
 ```
 
@@ -265,6 +271,11 @@ claude -p "Add a second line to hello.txt that says 'Modified by Claude'" \
 | `--max-budget-usd 1.00` | Spending cap |
 | `--output-format json` | Structured output for pipelines |
 | `--continue` | Resume the last conversation |
+
+- **Inside Claude Code chat** → `/loop`, `/ralph-loop`, just talk to Claude
+- **From your terminal, one-shot** → `claude -p`
+- **In a cron job or CI/CD** → `claude -p`
+- **Overnight, laptop closed** → `/schedule`
 
 ---
 
