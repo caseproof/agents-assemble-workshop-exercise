@@ -30,6 +30,7 @@ That's not a demo. That's a workflow. Let's build it.
 - [Going Deeper: Agent Teams](#going-deeper-agent-teams)
 - [Going Deeper: Memory Systems](#going-deeper-memory-systems)
 - [Going Deeper: `claude -p` Headless Mode](#going-deeper-claude--p-headless-mode)
+- [Going Deeper: Daemons](#going-deeper-daemons)
 - [What's Next](#whats-next)
 - [Resources](#resources)
 
@@ -397,6 +398,41 @@ claude -p "Run vendor/bin/phpunit. If any tests fail, fix the source file and ru
 - **From your terminal, one-shot** → `claude -p`
 - **In a cron job or CI/CD** → `claude -p`
 - **Overnight, laptop closed** → `/schedule`
+
+---
+
+## Going Deeper: Daemons
+
+`claude -p` runs once and exits. A daemon runs forever — watching for events, dispatching agents, recovering from failures, and reporting back. It's the difference between a task and a system.
+
+**When you need a daemon instead of headless mode:**
+- You want to watch a directory for new files and trigger an agent when one appears
+- You need a pipeline that runs continuously (debate → plan → build → review → ship)
+- You want health checks, crash recovery, and Telegram notifications when something breaks
+- Your agents need to run on a schedule *and* in response to events
+
+**The basic pattern:**
+
+```typescript
+import { watch } from 'chokidar';
+import { execSync } from 'child_process';
+
+// Watch for new PRDs and dispatch the pipeline
+watch('prds/*.md', { ignoreInitial: true }).on('add', (path) => {
+  console.log(`New PRD detected: ${path} — dispatching agents`);
+  execSync(`claude -p "Read ${path} and execute the pipeline." --max-turns 50`);
+});
+```
+
+**A production daemon adds:**
+- Retry logic (fail → retry once → try alternative → block and alert human)
+- Hung agent detection (kill agents that exceed a time limit)
+- Token usage tracking (know what each pipeline run costs)
+- Structured logging (timestamps, levels, correlation IDs)
+- Crash recovery with backoff
+- Notification hooks (Telegram, Slack, email on completion or failure)
+
+**Implementation reference:** The Great Minds agency daemon is a full production example — file watcher, pipeline dispatcher, health checks, dream/consolidation cycles, and SQLite token ledger. Built with the Anthropic Agent SDK. See [`sethshoultes/great-minds/daemon`](https://github.com/sethshoultes/great-minds/tree/main/daemon).
 
 ---
 
