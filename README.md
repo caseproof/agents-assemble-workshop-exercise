@@ -9,8 +9,6 @@ That's not a demo. That's a workflow. Let's build it.
 
 > **Presentation:** https://caseproof.github.io/agents-assemble-workshop-exercise/
 
-> **Ralph Wiggum Guide:** https://awesomeclaude.ai/ralph-wiggum
-
 ---
 
 ## Setup (do this first)
@@ -138,6 +136,8 @@ Twelve lines of markdown just changed how an AI reasons about your codebase. Tha
 ### Exercise 4: Ralph Wiggum — Fix Until It Passes (the main event)
 
 This is the one. This is what everything else was building toward.
+
+> **Ralph Wiggum Guide:** https://awesomeclaude.ai/ralph-wiggum
 
 This repo has **intentional bugs** in `src/`. The tests in `tests/` are correct. Ralph's job: run the tests, find what's failing, fix the source, run again. Repeat until everything is green.
 
