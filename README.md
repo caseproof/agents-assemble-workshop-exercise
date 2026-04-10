@@ -259,6 +259,56 @@ Watch Steve Jobs and Elon Musk argue about it. Then try it on a real decision yo
 
 ---
 
+## Going Deeper: Custom Agents + Personas
+
+You've already seen how CLAUDE.md gives an agent an identity. Sub-agents take that further — you define a named agent with a specific role, a system prompt, and a set of allowed tools. Then you call it by name.
+
+```markdown
+# team/qa-agent.md
+
+You are Margaret Hamilton. You care about what breaks at 3am.
+Your job: review the code in src/ and run the tests.
+If anything fails, write a detailed bug report to reports/qa.md.
+Do not fix anything — just report.
+```
+
+Then from your main Claude session:
+```
+Use the qa-agent to review the last commit.
+```
+
+**Why personas matter here:** A generic QA agent gives you generic feedback. Margaret Hamilton asks "what happens when this fails at 3am?" Steve Jobs asks "would I be proud to ship this?" The same review prompt, two completely different outputs — because identity shapes how an agent reasons, not just what it's told to do.
+
+**Each sub-agent should have:**
+- A clear role (what it does and doesn't do)
+- A persona that shapes *how* it reasons
+- Defined inputs (what to read) and outputs (what to produce)
+- Explicit tool permissions (don't give a reviewer write access)
+
+**Read more:** https://code.claude.com/docs/en/sub-agents
+
+---
+
+## Going Deeper: Agent Teams
+
+Once you've defined individual agents, the next level is coordinating them — multiple Claude instances working in parallel with structured handoffs.
+
+```
+"Build me a three-agent pipeline. Strategist, developer, QA.
+Parallel. Loop until QA passes."
+```
+
+One sentence. Claude writes the role definitions and the orchestration. Your agents. Your rules. Your team.
+
+**How it works:**
+- Each agent runs in an isolated git worktree — no concurrent writes, no conflicts
+- The orchestrator dispatches work, collects output, routes failures back to the right agent
+- The pipeline loops until a quality gate passes
+
+**Read more:** https://code.claude.com/docs/en/agent-teams
+
+---
+
 ## Going Deeper: `claude -p` (Headless Mode)
 
 Everything in this workshop — `/loop`, Ralph Wiggum, `/schedule` — is built on top of `claude -p`. Runs in your regular terminal, no chat window, no interactive session.
@@ -282,27 +332,6 @@ claude -p "Run vendor/bin/phpunit. If any tests fail, fix the source file and ru
 - **From your terminal, one-shot** → `claude -p`
 - **In a cron job or CI/CD** → `claude -p`
 - **Overnight, laptop closed** → `/schedule`
-
----
-
-## Agent Teams
-
-Once you've mastered loops and Ralph, the next level is coordinated multi-agent teams — multiple Claude instances working in parallel with defined roles, isolated worktrees, and structured handoffs.
-
-```
-"Build me a three-agent pipeline. Strategist, developer, QA.
-Parallel. Loop until QA passes."
-```
-
-One sentence. Claude writes the CLAUDE.md files, the role definitions, and the orchestration. Your agents. Your rules. Your team.
-
-**How it works:**
-- Each agent gets a role definition (a markdown file describing its job, inputs, outputs, quality bar)
-- Agents run in parallel using git worktrees for isolation — no concurrent writes, no conflicts
-- The orchestrator dispatches work, collects output, routes failures back to the right agent
-- The pipeline loops until a quality gate passes
-
-**Read more:** https://code.claude.com/docs/en/agent-teams
 
 ---
 
