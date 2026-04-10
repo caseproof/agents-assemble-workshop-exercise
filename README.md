@@ -7,6 +7,7 @@ By the end of the Bonus, you'll have two agents running in parallel — one buil
 
 That's not a demo. That's a workflow. Let's build it.
 
+> **Presentation:** https://caseproof.github.io/agents-assemble-workshop-exercise/
 > **Ralph Wiggum Guide:** https://awesomeclaude.ai/ralph-wiggum
 
 ---
