@@ -12,6 +12,7 @@ Examples:
 
 - User: 'Would normal people care about this product?'
   Assistant: 'That is literally Oprah's superpower. Launching her now.'"
+color: purple
 model: haiku
 ---
 

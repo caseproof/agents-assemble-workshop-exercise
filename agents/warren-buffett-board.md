@@ -12,6 +12,7 @@ Examples:
 
 - User: 'What is our competitive moat?'
   Assistant: 'Warren has spent 60 years identifying moats. Nobody better to ask.'"
+color: blue
 model: haiku
 ---
 
