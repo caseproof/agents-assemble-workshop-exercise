@@ -1,13 +1,29 @@
 # Agents Assemble — Workshop Exercise
 
-A PHP utility library with **intentional bugs**. Your job: let an autonomous AI agent fix them.
+A PHP utility library with **intentional bugs**. Your job: let an autonomous AI agent find and fix them.
 
-## Setup
+By the end of Exercise 3, you'll have an agent working through a task list while you watch.
+By the end of Exercise 4, you'll have one fixing its own bugs without being asked twice.
+By the end of the Bonus, you'll have two agents running in parallel — one building, one monitoring.
+
+That's not a demo. That's a workflow. Let's build it.
+
+> **Ralph Wiggum Guide:** https://awesomeclaude.ai/ralph-wiggum
+
+---
+
+## Setup (do this first)
 
 ```bash
-git clone <repo-url>
-cd agents-assemble-exercise
+git clone https://github.com/caseproof/agents-assemble-workshop-exercise.git
+cd agents-assemble-workshop-exercise
 composer install
+```
+
+Install the plugins:
+```
+/plugin install ralph-loop@claude-plugins-official
+npx plugins add sethshoultes/great-minds-plugin
 ```
 
 ## Run Tests
@@ -20,32 +36,7 @@ vendor/bin/phpunit
 
 You should see **multiple failing tests**. That's the point.
 
-## The Exercise
-
-### Part 1: Autonomous Loop (RALPH)
-
-Install the RALPH Wiggum plugin and let Claude Code fix all failing tests autonomously:
-
-```bash
-/plugin install ralph-wiggum@claude-plugins-official
-
-/ralph-loop "Fix all failing tests in this repo. Run vendor/bin/phpunit after each fix. Only modify files in src/ — never modify tests. Output <promise>DONE</promise> when all tests pass." --max-iterations 10
-```
-
-Watch it work. Each iteration, Claude reads the test output, finds a failure, fixes the bug in `src/`, runs tests again.
-
-### Part 2: Fork + Background Agent
-
-Fork your session and give the fork a different task:
-
-```bash
-claude --fork-session
-```
-
-In the fork, try:
-> "Add PHPDoc blocks to every public method in src/. Make sure existing tests still pass after your changes."
-
-Push it to background with **Ctrl+B**, then check `/tasks` from your main session.
+---
 
 ## What's Broken
 
@@ -62,3 +53,236 @@ The tests are correct. The source code is not. Don't modify the tests.
 1. **Never modify files in `tests/`** — the tests define the correct behavior
 2. **Only fix files in `src/`** — that's where the bugs are
 3. **Run `vendor/bin/phpunit` to verify** — green tests = fixed bugs
+
+---
+
+## Exercises
+
+> **Pro tip:** You don't have to create any of these files by hand. Claude Code can do it for you. Just say: *"Create a TODO.md with three tasks"* — and it will. Need a test file? *"Write a math.js with a few intentional bugs and a test file that catches them."* Claude can create files, run bash commands, scaffold entire project structures. These exercises show the file contents so you know what's happening — but in practice, just ask Claude to make it.
+
+---
+
+### Exercise 1: Build a Custom Command (4 min)
+
+Create your first slash command — one markdown file becomes one reusable tool.
+
+```bash
+mkdir -p ~/.claude/commands
+```
+
+Create `~/.claude/commands/explain.md`:
+```markdown
+---
+name: explain
+description: Explain the current project
+---
+
+Read the README and package.json (or equivalent).
+Give me a 3-sentence summary of what this project does.
+```
+
+Run it in any project:
+```
+/explain
+```
+
+One markdown file = one command. No config, no plugins.
+
+---
+
+### Exercise 2: Give Your Agent a Brain (4 min)
+
+First, ask Claude to review something *without* a CLAUDE.md:
+```
+Review the last commit.
+```
+
+Note the response. Now create a `CLAUDE.md` in your project directory:
+```markdown
+# CLAUDE.md
+
+You are Margaret Hamilton. You care about:
+- Error handling and edge cases
+- What happens when things go wrong
+- Testing before shipping — always
+
+When reviewing, ask: "What happens when this breaks at 3am?"
+```
+
+Ask again:
+```
+Review the last commit.
+```
+
+Twelve lines of markdown just changed how an AI reasons about your codebase. That's not configuration — that's personality.
+
+---
+
+### Exercise 3: Ralph Wiggum — The Persistent Builder (4 min)
+
+Create a `TODO.md`:
+```markdown
+- [ ] Create a file called hello.txt that says "Hello from Ralph"
+- [ ] Create a file called goodbye.txt that says "Goodbye from Ralph"
+- [ ] Create a file called count.txt with the numbers 1 through 5, one per line
+```
+
+Now tell Ralph what to do, what done looks like, and when to stop:
+```
+/ralph-loop:ralph-loop "Read TODO.md. Pick one unchecked task. Do it. Mark it [x] in TODO.md. When all tasks are checked, say ALL TASKS COMPLETE."
+  --completion-promise "ALL TASKS COMPLETE"
+  --max-iterations 10
+```
+
+Watch it work through the list — one task, check it off, back for the next. When all three are done, it stops itself.
+
+To stop early: `/ralph-loop:cancel-ralph`
+
+> **What's actually happening under the hood:** Each Ralph iteration is a completely fresh agent instance — no memory of the previous run. The TODO.md *is* the memory. Ralph reads it, sees what's checked, picks the next unchecked item, does it, marks it done, and exits. The loop calls it again. The file is the state.
+
+---
+
+### Exercise 4: Ralph Wiggum — Fix Until It Passes (the main event)
+
+This is the one. This is what everything else was building toward.
+
+Create a file called `math.js`:
+```javascript
+function add(a, b) {
+  return a - b; // bug: should be +
+}
+
+function multiply(a, b) {
+  return a + b; // bug: should be *
+}
+
+module.exports = { add, multiply };
+```
+
+Create `math.test.js`:
+```javascript
+const { add, multiply } = require('./math');
+
+console.assert(add(2, 3) === 5, 'FAIL: add(2, 3) should be 5, got ' + add(2, 3));
+console.assert(add(-1, 1) === 0, 'FAIL: add(-1, 1) should be 0, got ' + add(-1, 1));
+console.assert(multiply(3, 4) === 12, 'FAIL: multiply(3, 4) should be 12, got ' + multiply(3, 4));
+console.assert(multiply(0, 5) === 0, 'FAIL: multiply(0, 5) should be 0, got ' + multiply(0, 5));
+
+console.log('ALL TESTS PASSED');
+```
+
+Now let Ralph fix it:
+```
+/ralph-loop:ralph-loop "Run node math.test.js. If any assertions fail, read math.js, find the bug, fix it, and run the tests again."
+  --completion-promise "ALL TESTS PASSED"
+  --max-iterations 5
+```
+
+You gave it broken code and a way to measure success. It did the rest. No instructions on *how* to fix it. No hand-holding. Just: here's the work, here's what done looks like, go.
+
+---
+
+### Exercise 5: Ralph With a Real PRD — The Full Pattern (take-home)
+
+This is the original Ralph technique as described by Jeffrey Huntley. Instead of a TODO list, Ralph works from a structured requirements file — and writes its own memory between iterations.
+
+> **Watch these first:**
+> - https://www.youtube.com/watch?v=A6vYr0dmQAY — Gary Sims builds a complete MQTT server from spec to working code
+> - https://www.youtube.com/watch?v=_IK18goX4X8 — Deep dive into prd.json + progress.txt, feedback loops, human-in-the-loop Ralph, and why small tasks matter
+
+**The two-file memory system:**
+- `prd.json` — what needs to be built, structured as user stories with `pass`/`fail` status
+- `progress.txt` — notes the AI writes to itself about what it's done so far
+
+**Step 1: Ask Claude to create the PRD**
+```
+Create a prd.json for a simple command-line calculator that supports add,
+subtract, multiply, and divide. Format it as a JSON array of user stories,
+each with: id, description, acceptance_criteria, and status (set to "fail").
+```
+
+**Step 2: Create an empty progress file**
+```bash
+echo "No progress yet. Starting fresh." > progress.txt
+```
+
+**Step 3: Run Ralph once — human in the loop**
+```
+/ralph-loop:ralph-loop "Read prd.json and progress.txt. Pick the highest priority user story where status is fail. Implement it. Write tests. Run them. If they pass, update prd.json to mark it pass. Append progress notes to progress.txt. Make a git commit. If all stories pass, say ALL STORIES PASSING."
+  --completion-promise "ALL STORIES PASSING"
+  --max-iterations 1
+```
+
+Check: Did it update `prd.json`? Did it write to `progress.txt`? Did it commit?
+
+**Step 4: Let it run**
+```
+/ralph-loop:ralph-loop "Read prd.json and progress.txt. Pick the highest priority user story where status is fail. Implement it. Write tests. Run them. If they pass, mark it pass in prd.json. Append progress notes to progress.txt. Only work on ONE story per iteration. Make a git commit. If all stories pass, say ALL STORIES PASSING."
+  --completion-promise "ALL STORIES PASSING"
+  --max-iterations 20
+```
+
+Walk away. When you come back: every story marked `pass`, a git commit per feature, and `progress.txt` as a full log written by Ralph, for Ralph.
+
+This is what the 262 files morning looked like. This is what the $50K contract looked like. A spec, two files, and a loop.
+
+---
+
+### Bonus: Two Agents, One Goal
+
+1. Write a `CLAUDE.md` that defines your agent as a senior full-stack developer
+2. Write a `TODO.md` with 5 tasks that together build a simple web page
+3. Start Ralph working through the list:
+   ```
+   /ralph-loop:ralph-loop "Read TODO.md. Pick one unchecked task. Build it. Mark it [x] when done."
+     --completion-promise "ALL TASKS COMPLETE"
+     --max-iterations 10
+   ```
+4. While Ralph builds, open a second Claude Code window and run:
+   ```
+   /loop 2m check TODO.md and report how many tasks are complete vs remaining
+   ```
+
+Now you have two agents: one building, one monitoring. That's the beginning of a team.
+
+---
+
+## Going Deeper: `claude -p` (Headless Mode)
+
+Everything in this workshop — `/loop`, Ralph Wiggum, `/schedule` — is built on top of `claude -p`.
+
+```bash
+claude -p "Add a second line to hello.txt that says 'Modified by Claude'" \
+  --max-turns 3 \
+  --max-budget-usd 0.50
+```
+
+| Flag | What it does |
+|------|-------------|
+| `-p "..."` | Run a prompt non-interactively |
+| `--allowedTools "Read,Write,Edit,Bash"` | Control what Claude can touch |
+| `--max-turns 10` | Cap how many tool calls Claude gets |
+| `--max-budget-usd 1.00` | Spending cap |
+| `--output-format json` | Structured output for pipelines |
+| `--continue` | Resume the last conversation |
+
+---
+
+## What's Next
+
+- **`/schedule`** — cloud tasks that run without your laptop: `/schedule daily at 2am Read TODO.md and complete all unchecked tasks`
+- **Great Minds Plugin** — full 14-persona agent team: `npx plugins add sethshoultes/great-minds-plugin` → `/agency-debate "your question"`
+- **Build your own team** — *"Build me a three-agent pipeline. Strategist, developer, QA. Parallel. Loop until QA passes."* One sentence. Claude writes the whole thing.
+
+---
+
+## Resources
+
+- **Ralph Wiggum Guide:** https://awesomeclaude.ai/ralph-wiggum
+- **Gary Sims — Ralph Wiggum Demo:** https://www.youtube.com/watch?v=A6vYr0dmQAY
+- **Matt Pocock — Ralph Deep Dive:** https://www.youtube.com/watch?v=_IK18goX4X8
+- **Great Minds Plugin:** `npx plugins add sethshoultes/great-minds-plugin`
+- **Addy Osmani — The Code Agent Orchestra:** https://addyosmani.com/blog/code-agent-orchestra/
+- **Addy Osmani — How to Write a Good Spec for AI Agents:** https://addyo.substack.com/p/how-to-write-a-good-spec-for-ai-agents
+- **Anthropic — Agent Skills:** https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills
+- **awesome-claude-code:** https://github.com/hesreallyhim/awesome-claude-code
