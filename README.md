@@ -14,9 +14,6 @@ That's not a demo. That's a workflow. Let's build it.
 ## Table of Contents
 
 - [Setup](#setup-do-this-first)
-- [Run Tests](#run-tests)
-- [What's Broken](#whats-broken)
-- [Rules](#rules)
 - [Exercises](#exercises)
   - [Exercise 1: /loop — On/Off Switch](#exercise-1-loop--learn-the-onoff-switch-2-min)
   - [Exercise 2: Build a Custom Command](#exercise-2-build-a-custom-command-3-min)
@@ -50,34 +47,6 @@ Install the plugins:
 /plugin install ralph-loop@claude-plugins-official
 npx plugins add sethshoultes/great-minds-plugin
 ```
-
-## Run Tests
-
-```bash
-composer test
-# or
-vendor/bin/phpunit
-```
-
-You should see **multiple failing tests**. That's the point.
-
----
-
-## What's Broken
-
-Three modules, each with intentional bugs:
-
-- **StringUtils** — `slugify()`, `truncate()`, `initials()`
-- **ArrayUtils** — `flatten()`, `groupBy()`, `unique()`, `pluck()`
-- **ValidationUtils** — `isValidEmail()`, `isStrongPassword()`, `isValidUrl()`
-
-The tests are correct. The source code is not. Don't modify the tests.
-
-## Rules
-
-1. **Never modify files in `tests/`** — the tests define the correct behavior
-2. **Only fix files in `src/`** — that's where the bugs are
-3. **Run `vendor/bin/phpunit` to verify** — green tests = fixed bugs
 
 ---
 
@@ -190,6 +159,34 @@ To stop early: `/ralph-loop:cancel-ralph`
 Now apply that same pattern to a real codebase.
 
 > **Ralph Wiggum Guide:** https://awesomeclaude.ai/ralph-wiggum
+
+#### Run Tests
+
+```bash
+composer test
+# or
+vendor/bin/phpunit
+```
+
+You should see **multiple failing tests**. That's the point.
+
+---
+
+#### What's Broken
+
+Three modules, each with intentional bugs:
+
+- **StringUtils** — `slugify()`, `truncate()`, `initials()`
+- **ArrayUtils** — `flatten()`, `groupBy()`, `unique()`, `pluck()`
+- **ValidationUtils** — `isValidEmail()`, `isStrongPassword()`, `isValidUrl()`
+
+The tests are correct. The source code is not. Don't modify the tests.
+
+#### Rules
+
+1. **Never modify files in `tests/`** — the tests define the correct behavior
+2. **Only fix files in `src/`** — that's where the bugs are
+3. **Run `vendor/bin/phpunit` to verify** — green tests = fixed bugs
 
 This repo has **intentional bugs** in `src/`. The tests in `tests/` are correct. Ralph's job: run the tests, find what's failing, fix the source, run again. Repeat until everything is green.
 
