@@ -161,7 +161,7 @@ Now apply that same pattern to a real codebase.
 > **Ralph Wiggum Guide:** https://awesomeclaude.ai/ralph-wiggum
 
 #### Run Tests
-
+ `/agents-assemble-workshop-exercise/tree/main/tests`
 ```bash
 composer test
 # or
