@@ -251,6 +251,40 @@ Walk away. When you come back: every story marked `pass`, a git commit per featu
 
 This is what the 262 files morning looked like. This is what the $50K contract looked like. A spec, two files, and a loop.
 
+#### Taking it further: The 13-Day Agent
+
+Notion co-founder Simon Last ran a coding agent for **13 days straight** using a refined version of this same pattern. Four structural rules did all the heavy lifting:
+
+1. **Self-verification** — design test layers the agent can loop on. It proves correctness itself.
+2. **Spec documents** — goals, implementation details, and verification criteria in a markdown file the agent iterates against.
+3. **Running to-do list** — break complex work into a list the agent can see and edit.
+4. **Adversarial review** — every ~20 iterations, a fresh-context sub-agent reviews the spec and implementation. Loop on its feedback until aligned.
+
+**The prompt template:**
+```
+Before you start work on this project, create three files:
+1. spec.md — a complete spec with goals, implementation details,
+   and a verification section describing exactly how you'll prove
+   each piece works.
+2. todo.md — a running to-do list you'll edit as you work. Break
+   complex tasks into verifiable sub-tasks.
+3. tests/ — a folder of end-to-end tests that let you verify
+   everything you build. Loop on them until each passes.
+
+While you work: (a) consult spec.md before every change, (b) check
+off todo.md as you go, (c) run tests after every meaningful commit,
+(d) every ~20 iterations, call a fresh sub-agent with "review
+spec.md and the current implementation for gaps" and loop on its
+feedback until alignment is reached.
+
+Do not ask me for clarification on anything you can resolve by
+reading the spec and running the tests. Start with the spec.
+```
+
+Notice the pattern: `spec.md` is your `prd.json`. `todo.md` is your `progress.txt`. The tests are your completion promise. The only new idea is the adversarial sub-agent review — a fresh context checking for drift every 20 iterations. Same Ralph, longer leash.
+
+> **Source:** [Simon Last on X](https://x.com/simonlast/status/2044129575962325337)
+
 ---
 
 ### Bonus: Two Agents, One Goal
@@ -503,5 +537,6 @@ Routines are currently in research preview and available on Pro, Max, Team, and 
 - **Addy Osmani — The Code Agent Orchestra:** https://addyosmani.com/blog/code-agent-orchestra/
 - **Addy Osmani — How to Write a Good Spec for AI Agents:** https://addyo.substack.com/p/how-to-write-a-good-spec-for-ai-agents
 - **Anthropic — Agent Skills:** https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills
+- **Simon Last — 13-Day Agent Pattern:** https://x.com/simonlast/status/2044129575962325337
 - **Claude Code Routines (Cloud Automation):** https://code.claude.com/docs/en/routines
 - **awesome-claude-code:** https://github.com/hesreallyhim/awesome-claude-code
