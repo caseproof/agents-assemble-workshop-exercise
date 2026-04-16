@@ -28,6 +28,7 @@ That's not a demo. That's a workflow. Let's build it.
 - [Going Deeper: Memory Systems](#going-deeper-memory-systems)
 - [Going Deeper: `claude -p` Headless Mode](#going-deeper-claude--p-headless-mode)
 - [Going Deeper: Daemons](#going-deeper-daemons)
+- [Going Deeper: Routines (Cloud Automation)](#going-deeper-routines-cloud-automation)
 - [What's Next](#whats-next)
 - [Glossary](#glossary)
 - [Resources](#resources)
@@ -438,6 +439,31 @@ watch('prds/*.md', { ignoreInitial: true }).on('add', (path) => {
 
 ---
 
+## Going Deeper: Routines (Cloud Automation)
+
+Daemons and headless mode run on your machine. **Routines** are the cloud-native version — they run on Anthropic's infrastructure, so they keep working when your laptop is closed.
+
+A routine is a saved Claude Code configuration: a prompt, one or more repositories, and a set of connectors (Slack, Linear, GitHub, etc.), packaged once and triggered automatically.
+
+**Three trigger types:**
+- **Scheduled** — run hourly, nightly, or weekly (like `/schedule`, but in the cloud)
+- **API** — an HTTP endpoint you can call from CI/CD pipelines, alerting tools, or deploy scripts
+- **GitHub** — react to pull requests, releases, or other repo events automatically
+
+**Example use cases:**
+- Nightly backlog grooming — read new issues, apply labels, post a summary to Slack
+- PR code review — run your team's checklist on every `pull_request.opened` event
+- Deploy verification — smoke-test a new build and post go/no-go to the release channel
+- Docs drift — scan merged PRs weekly and open update PRs for stale documentation
+
+A single routine can combine triggers. A PR review routine can run nightly *and* react to every new PR *and* be callable from a deploy script.
+
+Routines are currently in research preview and available on Pro, Max, Team, and Enterprise plans.
+
+**Read more:** https://code.claude.com/docs/en/routines
+
+---
+
 ## What's Next
 
 - **`/schedule`** — cloud tasks that run without your laptop: `/schedule daily at 2am Read TODO.md and complete all unchecked tasks`
@@ -477,4 +503,5 @@ watch('prds/*.md', { ignoreInitial: true }).on('add', (path) => {
 - **Addy Osmani — The Code Agent Orchestra:** https://addyosmani.com/blog/code-agent-orchestra/
 - **Addy Osmani — How to Write a Good Spec for AI Agents:** https://addyo.substack.com/p/how-to-write-a-good-spec-for-ai-agents
 - **Anthropic — Agent Skills:** https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills
+- **Claude Code Routines (Cloud Automation):** https://code.claude.com/docs/en/routines
 - **awesome-claude-code:** https://github.com/hesreallyhim/awesome-claude-code
