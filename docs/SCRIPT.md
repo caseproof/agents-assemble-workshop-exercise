@@ -132,7 +132,7 @@
   https://www.youtube.com/watch?v=A6vYr0dmQAY
 - **Matt Pocock — Ralph Deep Dive:**
   https://www.youtube.com/watch?v=_IK18goX4X8
-- **Great Minds Plugin:** `npx plugins add sethshouldes/great-minds-plugin`
+- **Great Minds Plugin:** `npx plugins add sethshoultes/great-minds-plugin`
 - **Addy Osmani — The Code Agent Orchestra:**
   https://addyosmani.com/blog/code-agent-orchestra/
 - **Addy Osmani — How to Write a Good Spec for AI Agents:**
