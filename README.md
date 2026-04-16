@@ -317,13 +317,17 @@ and performance issues. Assign it the Margaret Hamilton persona from agents/marg
 
 Claude will generate the agent file, wire up the persona, and drop it in `.claude/agents/`. You can also build one from scratch with the `/agents` command, or write the markdown file directly — the format is just frontmatter + a system prompt.
 
-**14 ready-made personas are in the [`agents/`](./agents) folder** — Margaret Hamilton, Steve Jobs, Elon Musk, Jony Ive, and 10 more. Clone the repo and they're ready to use as-is, or reference them as a starting point for your own agents:
+**14 ready-made personas are in the [`agents/`](./agents) folder** — Margaret Hamilton, Steve Jobs, Elon Musk, Jony Ive, and 10 more. Clone the repo, and they're ready to use as-is, or reference them as a starting point for your own agents:
 
 ```
 Create a sub-agent for writing blog posts. Use agents/maya-angelou-writer.md as the persona.
 ```
 
 **Read more:** https://code.claude.com/docs/en/sub-agents
+
+**Agent Persona Builder:** https://personas.caseproofagent.com/
+
+Build a custom AI persona backed by Caseproof's knowledge base. Pick a template, customize it, chat with it, and download it for Claude Desktop.
 
 ---
 
@@ -351,7 +355,7 @@ One sentence. Claude writes the role definitions and the orchestration. Your age
 
 By default, agent memory is file-based — `MEMORY.md` as an index, individual `.md` files for each memory, written and read by the agent across sessions. This works well for a single agent working on a single project.
 
-When you have multiple agents, multiple projects, or need to search across accumulated knowledge, a database becomes the better tool.
+When you have multiple agents or projects or need to search across accumulated knowledge, a database is a better tool.
 
 **The pattern:** SQLite + embeddings. Each memory is stored as a row with a vector embedding alongside it. When an agent needs context, it searches by semantic similarity rather than exact file names.
 
